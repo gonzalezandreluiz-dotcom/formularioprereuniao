@@ -161,8 +161,8 @@ export function AdminPage() {
               <p className="text-xs text-[#52526a] mb-4">
                 {new Date(sub.submitted_at).toLocaleString('pt-BR')}
               </p>
-              {sub.pf_data && <SubmissionSection title="Pessoa Física" data={sub.pf_data as Record<string, string>} />}
-              {sub.pj_data && <SubmissionSection title="Pessoa Jurídica" data={sub.pj_data as Record<string, string>} />}
+              {sub.pf_data && <SubmissionSection title="Pessoa Física" data={sub.pf_data as unknown as Record<string, string>} />}
+              {sub.pj_data && <SubmissionSection title="Pessoa Jurídica" data={sub.pj_data as unknown as Record<string, string>} />}
             </div>
           ))}
         </div>
