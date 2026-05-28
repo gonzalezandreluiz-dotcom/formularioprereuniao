@@ -97,7 +97,12 @@ export function FormPage() {
       return
     }
 
-    await supabase.functions.invoke('notify-submission', { body: { submissionId: submission.id } })
+    const { error: notifyError } = await supabase.functions.invoke('notify-submission', { body: { submissionId: submission.id } })
+    if (notifyError) {
+      setStatus('ready')
+      setSubmitError('Erro ao enviar notificação. Tente novamente.')
+      return
+    }
     setStatus('success')
   }
 
@@ -182,8 +187,15 @@ export function FormPage() {
 
         {/* Error toast */}
         {submitError && (
-          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600">
-            {submitError}
+          <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-600 flex items-center justify-between gap-3">
+            <span>{submitError}</span>
+            <button
+              type="button"
+              onClick={() => setSubmitError('')}
+              className="text-red-700 font-semibold underline whitespace-nowrap"
+            >
+              Tentar novamente
+            </button>
           </div>
         )}
 
