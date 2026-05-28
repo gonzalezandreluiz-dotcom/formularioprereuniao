@@ -5,8 +5,7 @@ export const MARGEM_LIQUIDA = ['<5%', '5–15%', '15–30%', '>30%']
 export const RESERVA_EMPRESA = ['Não tenho', '<1 mês', '1–3 meses', '+3 meses']
 export const FLUXO_CAIXA = ['Previsível', 'Sazonal', 'Irregular']
 export const CONTROLE_FINANCEIRO = ['Sim', 'Parcialmente', 'Não']
-export const SIM_NAO = ['Sim', 'Não']
-export const SIM_NAO_SABER = ['Sim', 'Não', 'Quero saber mais']
+export { SIM_NAO, SIM_NAO_SABER } from './shared-fields'
 export const OBJETIVO_PJ = [
   'Expansão',
   'Reserva para imprevistos',

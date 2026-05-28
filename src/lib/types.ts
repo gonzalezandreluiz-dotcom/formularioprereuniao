@@ -82,6 +82,7 @@ export interface PJData {
   informacoes_adicionais: string
 }
 
+// `nome` is excluded — it is always auto-populated from the client token and never empty
 export const PF_REQUIRED_FIELDS: (keyof PFData)[] = [
   'data_nascimento',
   'idade',
