@@ -84,12 +84,6 @@ export function PJForm({ data, onChange }: PJFormProps) {
         <FormField label="Margem líquida estimada">
           <PillSelect options={MARGEM_LIQUIDA} value={data.margem_liquida} onChange={f('margem_liquida')} />
         </FormField>
-        <FormField label="Fluxo de caixa">
-          <PillSelect options={FLUXO_CAIXA} value={data.fluxo_caixa} onChange={f('fluxo_caixa')} />
-        </FormField>
-        <FormField label="Reserva financeira da empresa">
-          <PillSelect options={RESERVA_EMPRESA} value={data.reserva_financeira} onChange={f('reserva_financeira')} />
-        </FormField>
         <FormField label="Possui dívidas ou passivos relevantes?">
           <ConditionalTextarea
             value={data.possui_dividas}
@@ -98,6 +92,12 @@ export function PJForm({ data, onChange }: PJFormProps) {
             onTextChange={f('dividas_descricao')}
             placeholder="Descreva as dívidas ou passivos (tipo, valor aproximado)…"
           />
+        </FormField>
+        <FormField label="Reserva financeira da empresa">
+          <PillSelect options={RESERVA_EMPRESA} value={data.reserva_financeira} onChange={f('reserva_financeira')} />
+        </FormField>
+        <FormField label="Fluxo de caixa">
+          <PillSelect options={FLUXO_CAIXA} value={data.fluxo_caixa} onChange={f('fluxo_caixa')} />
         </FormField>
       </SectionCard>
 
