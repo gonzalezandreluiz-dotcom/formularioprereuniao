@@ -35,13 +35,23 @@ serve(async (req) => {
     body: JSON.stringify({
       from: 'formulario@norsen.com.br',
       to: ADVISOR_EMAIL,
-      subject: `[Formulário respondido] ${clientName} — ${dateStr}`,
+      subject: `[Formulário respondido] ${clientName.replace(/[\r\n]/g, ' ')} — ${dateStr}`,
       html,
     }),
   })
 
   return new Response(JSON.stringify({ ok: true }), { status: 200 })
 })
+
+function esc(s: string | undefined): string {
+  if (s == null) return ''
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;')
+}
 
 function buildEmailHtml(
   clientName: string,
@@ -59,8 +69,8 @@ function buildEmailHtml(
   function row(label: string, value: string | undefined) {
     if (!value || value === 'Não') return ''
     return `<div style="${rowStyle}">
-      <div style="${labelStyle}">${label}</div>
-      <div style="${valueStyle}">${value}</div>
+      <div style="${labelStyle}">${esc(label)}</div>
+      <div style="${valueStyle}">${esc(value)}</div>
     </div>`
   }
 
@@ -125,8 +135,8 @@ function buildEmailHtml(
 
   return `
     <div style="${style}max-width:600px;margin:0 auto;padding:32px 24px;">
-      <h1 style="font-size:20px;font-weight:700;margin-bottom:4px;">${clientName}</h1>
-      <p style="font-size:13px;color:#6b6b80;margin-bottom:32px;">Formulário respondido em ${dateStr}</p>
+      <h1 style="font-size:20px;font-weight:700;margin-bottom:4px;">${esc(clientName)}</h1>
+      <p style="font-size:13px;color:#6b6b80;margin-bottom:32px;">Formulário respondido em ${esc(dateStr)}</p>
       ${pfHtml}
       ${pjHtml}
     </div>
