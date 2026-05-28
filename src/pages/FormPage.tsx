@@ -56,6 +56,7 @@ export function FormPage() {
         setPJData(emptyPJ(data.name))
         setStatus('ready')
       })
+      .catch(() => setStatus('not_found'))
   }, [token])
 
   function handlePFChange(field: keyof PFData, value: string) {
