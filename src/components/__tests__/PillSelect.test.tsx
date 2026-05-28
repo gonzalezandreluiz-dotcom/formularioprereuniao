@@ -23,7 +23,7 @@ describe('PillSelect', () => {
     expect(onChange).toHaveBeenCalledWith('Sim')
   })
 
-  it('não chama onChange ao clicar na opção já selecionada', () => {
+  it('chama onChange mesmo ao clicar na opção já selecionada', () => {
     const onChange = vi.fn()
     render(<PillSelect options={['Sim', 'Não']} value="Sim" onChange={onChange} />)
     fireEvent.click(screen.getByText('Sim'))
