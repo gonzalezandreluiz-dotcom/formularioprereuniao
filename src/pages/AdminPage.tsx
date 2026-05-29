@@ -47,6 +47,46 @@ function SubmissionSection({ title, data }: { title: string; data: Record<string
   )
 }
 
+function ClientRow({ client, formUrl, onViewResponses }: {
+  client: Client
+  formUrl: string
+  onViewResponses: () => void
+}) {
+  const [copied, setCopied] = useState(false)
+
+  function copyLink() {
+    navigator.clipboard.writeText(formUrl)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div className="px-5 py-3.5 border-b border-[#f0f0f5] last:border-0">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-semibold text-[#0d0d1a]">{client.name}</p>
+          <p className="text-xs text-[#52526a]">{new Date(client.created_at).toLocaleDateString('pt-BR')}</p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={copyLink}
+            title={formUrl}
+            className="text-xs text-[#52526a] font-medium px-3 py-1.5 border border-[#d0d0dc] rounded-lg hover:border-[#1e3a8a] hover:text-[#1e3a8a] transition-colors"
+          >
+            {copied ? 'Copiado!' : 'Copiar link'}
+          </button>
+          <button
+            onClick={onViewResponses}
+            className="text-xs text-[#1e3a8a] font-semibold px-3 py-1.5 border border-[#1e3a8a] rounded-lg"
+          >
+            Ver respostas
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function AdminPage() {
   const [view, setView] = useState<View>('checking')
   const [email, setEmail] = useState('')
@@ -269,20 +309,12 @@ export function AdminPage() {
             <p className="px-5 py-4 text-sm text-[#52526a]">Nenhum cliente cadastrado ainda.</p>
           )}
           {clients.map((client) => (
-            <div key={client.id} className="px-5 py-3.5 border-b border-[#f0f0f5] last:border-0 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-[#0d0d1a]">{client.name}</p>
-                <p className="text-xs text-[#52526a]">
-                  {new Date(client.created_at).toLocaleDateString('pt-BR')}
-                </p>
-              </div>
-              <button
-                onClick={() => handleViewResponses(client)}
-                className="text-xs text-[#1e3a8a] font-semibold px-3 py-1.5 border border-[#1e3a8a] rounded-lg"
-              >
-                Ver respostas
-              </button>
-            </div>
+            <ClientRow
+              key={client.id}
+              client={client}
+              formUrl={formUrl(client.token)}
+              onViewResponses={() => handleViewResponses(client)}
+            />
           ))}
         </div>
       </div>
