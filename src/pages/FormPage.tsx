@@ -16,7 +16,7 @@ function emptyPF(name: string): PFData {
     objetivo_principal: '', prazo_objetivo: '', valor_renda_objetivo: '',
     objetivos_secundarios: '', valor_renda_secundarios: '',
     seguro_vida: '', plano_saude: '', previdencia_privada: '',
-    motivacao_assessoria: '', teve_assessor: '', informacoes_adicionais: '',
+    motivacao_assessoria: '', teve_assessor: '', informacoes_adicionais: '', conta_xp: '',
   }
 }
 

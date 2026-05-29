@@ -159,6 +159,22 @@ export function PFForm({ data, onChange, errors }: PFFormProps) {
         <FormField label="Algo mais que queira compartilhar?">
           <TextArea value={data.informacoes_adicionais} onChange={f('informacoes_adicionais')} placeholder="Digite aqui…" />
         </FormField>
+        <FormField label="Já tem conta na XP?">
+          <PillSelect options={SIM_NAO} value={data.conta_xp} onChange={f('conta_xp')} />
+          {data.conta_xp === 'Não' && (
+            <p className="mt-2 text-sm text-[#52526a]">
+              Abra sua conta agora:{' '}
+              <a
+                href="https://cadastro.xpi.com.br/passo/assessor/step1?assessor=A40777"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#1e3a8a] font-medium underline underline-offset-2"
+              >
+                cadastro.xpi.com.br
+              </a>
+            </p>
+          )}
+        </FormField>
       </SectionCard>
     </div>
   )

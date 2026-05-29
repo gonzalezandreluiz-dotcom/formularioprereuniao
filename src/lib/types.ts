@@ -47,6 +47,7 @@ export interface PFData {
   motivacao_assessoria: string
   teve_assessor: string
   informacoes_adicionais: string
+  conta_xp: string
 }
 
 export interface PJData {

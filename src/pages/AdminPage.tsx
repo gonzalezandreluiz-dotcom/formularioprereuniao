@@ -16,6 +16,7 @@ const PF_LABELS: Record<string, string> = {
   seguro_vida: 'Seguro de vida', plano_saude: 'Plano de saúde',
   previdencia_privada: 'Previdência privada', motivacao_assessoria: 'Motivação',
   teve_assessor: 'Teve assessor', informacoes_adicionais: 'Informações adicionais',
+  conta_xp: 'Conta na XP',
   // PJ
   razao_social: 'Razão social', cnpj: 'CNPJ', segmento: 'Segmento', porte: 'Porte',
   num_socios: 'Nº sócios', tempo_operacao: 'Tempo de operação',

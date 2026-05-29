@@ -111,6 +111,7 @@ function buildEmailHtml(
     row('Motivação assessoria', pfData.motivacao_assessoria),
     row('Teve assessor antes', pfData.teve_assessor),
     row('Informações adicionais', pfData.informacoes_adicionais),
+    row('Conta na XP', pfData.conta_xp),
   ].join('') : ''
 
   const pjRows = pjData ? [
