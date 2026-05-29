@@ -47,12 +47,14 @@ function SubmissionSection({ title, data }: { title: string; data: Record<string
   )
 }
 
-function ClientRow({ client, formUrl, onViewResponses }: {
+function ClientRow({ client, formUrl, onViewResponses, onDelete }: {
   client: Client
   formUrl: string
   onViewResponses: () => void
+  onDelete: () => void
 }) {
   const [copied, setCopied] = useState(false)
+  const [confirming, setConfirming] = useState(false)
 
   function copyLink() {
     navigator.clipboard.writeText(formUrl)
@@ -81,6 +83,30 @@ function ClientRow({ client, formUrl, onViewResponses }: {
           >
             Ver respostas
           </button>
+          {confirming ? (
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-[#52526a]">Confirmar?</span>
+              <button
+                onClick={() => { setConfirming(false); onDelete() }}
+                className="text-xs text-white font-semibold px-2 py-1.5 bg-red-500 rounded-lg"
+              >
+                Sim
+              </button>
+              <button
+                onClick={() => setConfirming(false)}
+                className="text-xs text-[#52526a] font-medium px-2 py-1.5 border border-[#d0d0dc] rounded-lg"
+              >
+                Não
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setConfirming(true)}
+              className="text-xs text-red-400 font-medium px-3 py-1.5 border border-red-200 rounded-lg hover:border-red-400 hover:text-red-500 transition-colors"
+            >
+              Excluir
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -155,6 +181,11 @@ export function AdminPage() {
       loadClients()
     }
     setGenerating(false)
+  }
+
+  async function handleDeleteClient(client: Client) {
+    await supabase.from('clients').delete().eq('id', client.id)
+    loadClients()
   }
 
   async function handleViewResponses(client: Client) {
@@ -314,6 +345,7 @@ export function AdminPage() {
               client={client}
               formUrl={formUrl(client.token)}
               onViewResponses={() => handleViewResponses(client)}
+              onDelete={() => handleDeleteClient(client)}
             />
           ))}
         </div>
