@@ -159,7 +159,7 @@ export function PFForm({ data, onChange, errors }: PFFormProps) {
         <FormField label="Algo mais que queira compartilhar?">
           <TextArea value={data.informacoes_adicionais} onChange={f('informacoes_adicionais')} placeholder="Digite aqui…" />
         </FormField>
-        <FormField label="Já tem conta na XP?">
+        <FormField label="Já tem conta na XP?" required error={errors.has('conta_xp')}>
           <PillSelect options={SIM_NAO} value={data.conta_xp} onChange={f('conta_xp')} />
           {data.conta_xp === 'Não' && (
             <p className="mt-2 text-sm text-[#52526a]">

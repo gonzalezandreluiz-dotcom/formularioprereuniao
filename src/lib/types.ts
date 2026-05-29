@@ -94,4 +94,5 @@ export const PF_REQUIRED_FIELDS: (keyof PFData)[] = [
   'renda_mensal_bruta',
   'perfil_risco',
   'objetivo_principal',
+  'conta_xp',
 ]
