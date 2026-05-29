@@ -48,15 +48,18 @@ export function FormPage() {
 
   useEffect(() => {
     if (!token) { setStatus('not_found'); return }
-    supabase.from('clients').select('*').eq('token', token).single()
-      .then(({ data, error }) => {
+    ;(async () => {
+      try {
+        const { data, error } = await supabase.from('clients').select('*').eq('token', token).single()
         if (error || !data) { setStatus('not_found'); return }
         setClient(data)
         setPFData(emptyPF(data.name))
         setPJData(emptyPJ(data.name))
         setStatus('ready')
-      })
-      .catch(() => setStatus('not_found'))
+      } catch {
+        setStatus('not_found')
+      }
+    })()
   }, [token])
 
   function handlePFChange(field: keyof PFData, value: string) {
