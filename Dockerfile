@@ -1,8 +1,12 @@
 # Stage 1: Build
 FROM node:20-alpine AS builder
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+ARG VITE_ADMIN_PASSWORD
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
+ARG GIT_SHA
 COPY . .
 RUN npm run build
 
