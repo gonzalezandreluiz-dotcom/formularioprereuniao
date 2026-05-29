@@ -12,7 +12,7 @@ function emptyPF(name: string): PFData {
     nome: name, data_nascimento: '', idade: '', estado_civil: '',
     profissao: '', num_dependentes: '', possui_pets: '',
     renda_mensal_bruta: '', aliquota_ir: '', possui_dividas: 'Não', dividas_descricao: '',
-    perfil_risco: '', ja_investe: '', horizonte_investimento: '', declaracao_ir: '',
+    perfil_risco: '', ja_investe: 'Não', ja_investe_descricao: '', horizonte_investimento: '', declaracao_ir: '',
     objetivo_principal: '', prazo_objetivo: '', valor_renda_objetivo: '',
     objetivos_secundarios: '', valor_renda_secundarios: '',
     seguro_vida: '', plano_saude: '', previdencia_privada: '',

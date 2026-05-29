@@ -30,6 +30,7 @@ export interface PFData {
   // Seção 3
   perfil_risco: string
   ja_investe: string
+  ja_investe_descricao: string
   horizonte_investimento: string
   declaracao_ir: string
   // Seção 4

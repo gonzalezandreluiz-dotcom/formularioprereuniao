@@ -100,9 +100,14 @@ export function PFForm({ data, onChange, errors }: PFFormProps) {
         <FormField label="Perfil de risco" required error={errors.has('perfil_risco')}>
           <PillSelect options={PERFIL_RISCO} value={data.perfil_risco} onChange={f('perfil_risco')} />
         </FormField>
-        <FormField label="Já investe atualmente? Em quais produtos?">
-          <TextArea value={data.ja_investe} onChange={f('ja_investe')} placeholder="Digite aqui…" />
+        <FormField label="Já investe atualmente?">
+          <PillSelect options={SIM_NAO} value={data.ja_investe} onChange={f('ja_investe')} />
         </FormField>
+        {data.ja_investe === 'Sim' && (
+          <FormField label="Quais são os seus investimentos nacionais e internacionais?">
+            <TextArea value={data.ja_investe_descricao} onChange={f('ja_investe_descricao')} placeholder="Digite aqui os investimentos nacionais e internacionais…" />
+          </FormField>
+        )}
         <FormField label="Horizonte de investimento">
           <PillSelect options={HORIZONTE} value={data.horizonte_investimento} onChange={f('horizonte_investimento')} />
         </FormField>

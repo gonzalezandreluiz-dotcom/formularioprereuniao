@@ -9,7 +9,7 @@ const PF_LABELS: Record<string, string> = {
   profissao: 'Profissão', num_dependentes: 'Nº dependentes', possui_pets: 'Possui pets',
   renda_mensal_bruta: 'Renda mensal bruta', aliquota_ir: 'Alíquota de IR',
   possui_dividas: 'Possui dívidas', dividas_descricao: 'Dívidas',
-  perfil_risco: 'Perfil de risco', ja_investe: 'Já investe', horizonte_investimento: 'Horizonte',
+  perfil_risco: 'Perfil de risco', ja_investe: 'Já investe', ja_investe_descricao: 'Investimentos', horizonte_investimento: 'Horizonte',
   declaracao_ir: 'Declaração IR', objetivo_principal: 'Objetivo principal',
   prazo_objetivo: 'Prazo', valor_renda_objetivo: 'Valor/renda objetivo',
   objetivos_secundarios: 'Obj. secundários', valor_renda_secundarios: 'Valor/renda secundários',
