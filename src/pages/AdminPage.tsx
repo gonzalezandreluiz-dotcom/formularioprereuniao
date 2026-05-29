@@ -102,16 +102,7 @@ export function AdminPage() {
     setGenerating(true)
     setGeneratedToken('')
 
-    const base = slugify(newClientName.trim())
-    let slug = base
-    let attempt = 1
-    while (true) {
-      const { data: existing } = await supabase
-        .from('clients').select('id').eq('token', slug).maybeSingle()
-      if (!existing) break
-      attempt++
-      slug = `${base}-${attempt}`
-    }
+    const slug = `${slugify(newClientName.trim())}-${crypto.randomUUID().replace(/-/g, '').slice(0, 8)}`
 
     const { data } = await supabase
       .from('clients')
