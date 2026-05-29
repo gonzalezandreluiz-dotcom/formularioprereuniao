@@ -2,7 +2,7 @@
 create table if not exists clients (
   id         uuid primary key default gen_random_uuid(),
   name       text not null,
-  token      uuid not null unique default gen_random_uuid(),
+  token      text not null unique,
   created_at timestamptz not null default now()
 );
 

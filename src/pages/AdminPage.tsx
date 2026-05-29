@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Client, Submission } from '@/lib/types'
 
-type View = 'login' | 'dashboard' | 'responses'
+type View = 'checking' | 'login' | 'dashboard' | 'responses'
 
 const PF_LABELS: Record<string, string> = {
   data_nascimento: 'Data de nascimento', idade: 'Idade', estado_civil: 'Estado civil',
@@ -48,7 +48,8 @@ function SubmissionSection({ title, data }: { title: string; data: Record<string
 }
 
 export function AdminPage() {
-  const [view, setView] = useState<View>('login')
+  const [view, setView] = useState<View>('checking')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loginError, setLoginError] = useState('')
   const [clients, setClients] = useState<Client[]>([])
@@ -59,29 +60,62 @@ export function AdminPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([])
   const [loadingSubmissions, setLoadingSubmissions] = useState(false)
 
-  const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD as string
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) { setView('dashboard'); loadClients() }
+      else setView('login')
+    })
+  }, [])
 
   async function loadClients() {
     const { data } = await supabase.from('clients').select('*').order('created_at', { ascending: false })
     setClients(data ?? [])
   }
 
-  function handleLogin() {
-    if (password === ADMIN_PASSWORD) {
-      setView('dashboard')
-      loadClients()
-    } else {
-      setLoginError('Senha incorreta.')
-    }
+  async function handleLogin() {
+    setLoginError('')
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) { setLoginError('Email ou senha incorretos.'); return }
+    setView('dashboard')
+    loadClients()
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+    setView('login')
+    setEmail('')
+    setPassword('')
+  }
+
+  function slugify(name: string): string {
+    return name
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
   }
 
   async function handleGenerateLink() {
     if (!newClientName.trim()) return
     setGenerating(true)
     setGeneratedToken('')
+
+    const base = slugify(newClientName.trim())
+    let slug = base
+    let attempt = 1
+    while (true) {
+      const { data: existing } = await supabase
+        .from('clients').select('id').eq('token', slug).maybeSingle()
+      if (!existing) break
+      attempt++
+      slug = `${base}-${attempt}`
+    }
+
     const { data } = await supabase
       .from('clients')
-      .insert({ name: newClientName.trim(), token: crypto.randomUUID() })
+      .insert({ name: newClientName.trim(), token: slug })
       .select()
       .single()
     if (data) {
@@ -107,6 +141,14 @@ export function AdminPage() {
 
   const formUrl = (token: string) => `${window.location.origin}/form?token=${token}`
 
+  if (view === 'checking') {
+    return (
+      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
+        <p className="text-[#52526a] text-sm">Carregando…</p>
+      </div>
+    )
+  }
+
   if (view === 'login') {
     return (
       <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
@@ -118,6 +160,14 @@ export function AdminPage() {
               <p className="text-xs text-[#52526a]">Área do assessor</p>
             </div>
           </div>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); setLoginError('') }}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+            className="w-full bg-[#F7F7F7] border-[1.5px] border-[#d0d0dc] rounded-lg px-3 py-2.5 text-sm mb-2 focus:outline-none focus:border-[#1e3a8a]"
+          />
           <input
             type="password"
             placeholder="Senha"
@@ -174,10 +224,11 @@ export function AdminPage() {
     <div className="min-h-screen bg-[#F7F7F7]">
       <header className="bg-white border-b border-[#dcdce6] px-6 py-4 flex items-center gap-3.5">
         <div className="w-9 h-9 bg-[#1e3a8a] rounded-lg flex items-center justify-center text-white font-bold">N</div>
-        <div>
+        <div className="flex-1">
           <p className="text-sm font-bold text-[#0d0d1a]">Norsen Assessoria</p>
           <p className="text-xs text-[#52526a]">Área do assessor</p>
         </div>
+        <button onClick={handleSignOut} className="text-xs text-[#52526a] hover:text-[#0d0d1a]">Sair</button>
       </header>
 
       <div className="max-w-[700px] mx-auto px-5 py-8">
