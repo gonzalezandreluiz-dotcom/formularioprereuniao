@@ -48,11 +48,12 @@ function SubmissionSection({ title, data }: { title: string; data: Record<string
   )
 }
 
-function ClientRow({ client, formUrl, onViewResponses, onDelete }: {
+function ClientRow({ client, formUrl, onViewResponses, onDelete, onDownloadPDF }: {
   client: Client
   formUrl: string
   onViewResponses: () => void
   onDelete: () => void
+  onDownloadPDF: () => void
 }) {
   const [copied, setCopied] = useState(false)
   const [confirming, setConfirming] = useState(false)
@@ -77,6 +78,12 @@ function ClientRow({ client, formUrl, onViewResponses, onDelete }: {
             className="text-xs text-[#52526a] font-medium px-3 py-1.5 border border-[#d0d0dc] rounded-lg hover:border-[#1e3a8a] hover:text-[#1e3a8a] transition-colors"
           >
             {copied ? 'Copiado!' : 'Copiar link'}
+          </button>
+          <button
+            onClick={onDownloadPDF}
+            className="text-xs text-[#52526a] font-medium px-3 py-1.5 border border-[#d0d0dc] rounded-lg hover:border-[#1e3a8a] hover:text-[#1e3a8a] transition-colors"
+          >
+            Baixar PDF
           </button>
           <button
             onClick={onViewResponses}
@@ -182,6 +189,87 @@ export function AdminPage() {
       loadClients()
     }
     setGenerating(false)
+  }
+
+  async function handleDownloadPDF(client: Client) {
+    const { data } = await supabase
+      .from('submissions')
+      .select('*')
+      .eq('client_id', client.id)
+      .order('submitted_at', { ascending: false })
+
+    const submissions = data ?? []
+    const date = new Date().toLocaleDateString('pt-BR')
+
+    function esc(s: string | undefined) {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    }
+    function row(label: string, value: string | undefined) {
+      if (!value || value === 'Não') return ''
+      return `<div style="margin-bottom:10px"><div style="font-size:11px;color:#6b6b80">${esc(label)}</div><div style="font-size:13px;color:#111120">${esc(value)}</div></div>`
+    }
+    function section(title: string, rows: string) {
+      if (!rows.trim()) return ''
+      return `<div style="margin-bottom:20px"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#1e3a8a;margin-bottom:10px">${title}</div>${rows}</div>`
+    }
+
+    const body = submissions.length === 0
+      ? '<p style="color:#6b6b80;font-size:13px">Nenhuma resposta registrada.</p>'
+      : submissions.map(sub => {
+          const d = new Date(sub.submitted_at).toLocaleString('pt-BR')
+          const pf = sub.pf_data as Record<string,string> | null
+          const pj = sub.pj_data as Record<string,string> | null
+          const pfHtml = pf ? section('Pessoa Física', [
+            row('Data de nascimento', pf.data_nascimento), row('Idade', pf.idade),
+            row('Estado civil', pf.estado_civil), row('Profissão', pf.profissao),
+            row('Nº dependentes', pf.num_dependentes), row('Possui pets', pf.possui_pets),
+            row('Renda mensal bruta', pf.renda_mensal_bruta), row('Alíquota de IR', pf.aliquota_ir),
+            row('Dívidas', pf.possui_dividas === 'Sim' ? (pf.dividas_descricao || 'Sim') : ''),
+            row('Perfil de risco', pf.perfil_risco), row('Já investe', pf.ja_investe),
+            row('Investimentos', pf.ja_investe_descricao), row('Horizonte', pf.horizonte_investimento),
+            row('Declaração IR', pf.declaracao_ir), row('Objetivo principal', pf.objetivo_principal),
+            row('Prazo do objetivo', pf.prazo_objetivo), row('Valor/renda objetivo', pf.valor_renda_objetivo),
+            row('Objetivos secundários', pf.objetivos_secundarios), row('Valor/renda secundários', pf.valor_renda_secundarios),
+            row('Seguro de vida', pf.seguro_vida), row('Plano de saúde', pf.plano_saude),
+            row('Previdência privada', pf.previdencia_privada), row('Motivação assessoria', pf.motivacao_assessoria),
+            row('Teve assessor antes', pf.teve_assessor), row('Informações adicionais', pf.informacoes_adicionais),
+            row('Conta na XP', pf.conta_xp),
+          ].join('')) : ''
+          const pjHtml = pj ? section('Pessoa Jurídica', [
+            row('CNPJ', pj.cnpj), row('Segmento', pj.segmento), row('Porte', pj.porte),
+            row('Nº sócios', pj.num_socios), row('Tempo de operação', pj.tempo_operacao),
+            row('Faturamento anual', pj.faturamento_anual), row('Regime tributário', pj.regime_tributario),
+            row('Margem líquida', pj.margem_liquida),
+            row('Dívidas/passivos', pj.possui_dividas === 'Sim' ? (pj.dividas_descricao || 'Sim') : ''),
+            row('Reserva financeira', pj.reserva_financeira), row('Fluxo de caixa', pj.fluxo_caixa),
+            row('Controle financeiro', pj.controle_financeiro), row('Escritório contábil', pj.escritorio_contabil),
+            row('Investimentos empresa', pj.investimentos_empresa), row('Distribuição de lucros', pj.distribuicao_lucros),
+            row('Objetivo principal', pj.objetivo_principal), row('Prazo objetivo', pj.prazo_objetivo),
+            row('Planos de expansão', pj.planos_expansao), row('Previdência corporativa', pj.previdencia_corporativa),
+            row('Seguro empresarial', pj.seguro_empresarial), row('Planejamento sucessório', pj.planejamento_sucessorio),
+            row('Motivação assessoria', pj.motivacao_assessoria), row('Informações adicionais', pj.informacoes_adicionais),
+          ].join('')) : ''
+          return `<div style="border:1px solid #e5e7eb;border-radius:8px;padding:20px;margin-bottom:24px;page-break-inside:avoid">
+            <div style="font-size:11px;color:#6b6b80;margin-bottom:16px">${d}</div>
+            ${pfHtml}${pjHtml}
+          </div>`
+        }).join('')
+
+    const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+      <title>${esc(client.name)} — Respostas</title>
+      <style>@media print{body{margin:0}}</style>
+    </head><body style="font-family:Arial,sans-serif;max-width:700px;margin:32px auto;padding:0 24px;color:#111120">
+      <div style="margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #1e3a8a">
+        <div style="font-size:20px;font-weight:700">${esc(client.name)}</div>
+        <div style="font-size:12px;color:#6b6b80;margin-top:4px">Formulário de Pré-Reunião · Gerado em ${date}</div>
+      </div>
+      ${body}
+    </body></html>`
+
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const win = window.open(url, '_blank')
+    if (win) win.addEventListener('load', () => { win.print(); setTimeout(() => URL.revokeObjectURL(url), 60000) })
   }
 
   async function handleDeleteClient(client: Client) {
@@ -347,6 +435,7 @@ export function AdminPage() {
               formUrl={formUrl(client.token)}
               onViewResponses={() => handleViewResponses(client)}
               onDelete={() => handleDeleteClient(client)}
+              onDownloadPDF={() => handleDownloadPDF(client)}
             />
           ))}
         </div>
